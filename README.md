@@ -47,5 +47,22 @@ An end-to-end, hybrid quantum-classical application that combines a real-time we
 │     Local Aer Simulator Path       │ │   Physical QPU Execution Path   │
 │  • Instant response (~0.08s)       │ │  • IBM Quantum Platform Cloud   │
 │  • Ideal statevector computation   │ │  • Transpilation & Optimization │
+
+
+quantum-anomaly-detection/
+├── .gitignore
+├── README.md
+├── requirements.txt
+├── app.py                      # Flask Web Application (Local Simulator)
+├── test_execution.py           # Physical IBM Quantum Execution Script
+├── quantum/
+│   ├── __init__.py
+│   └── circuit.py              # Quantum circuit generation & logic
+├── templates/
+│   └── index.html              # Dashboard Web Interface
+├── static/
+│   ├── css/                    # Custom styling
+│   └── js/                     # Frontend interactions
+└── docs/                       # Diagrams, screenshots, and visual assets
 │  • Deterministic UI benchmarking   │ │  • Target: 156-Qubit Hardware   │
 └────────────────────────────────────┘ └─────────────────────────────────┘
