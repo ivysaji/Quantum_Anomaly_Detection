@@ -52,27 +52,46 @@ Quantum_Anomaly_Detector/
 ---
 
 ## 🏗️ System Architecture
-
-```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        User Interface (Web UI)                         │
-│             Real-time Metrics Dashboard & Telemetry Visualizer          │
+│                      1. PRESENTATION LAYER (Web UI)                     │
+│  [ Input Form / Parameters ]  ───►  [ Results & Visual Dashboard ]      │
 └──────────────────────────────────┬─────────────────────────────────────┘
-                                   │ HTTP API Requests
+                                   │ HTTP POST (Raw Features)
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│                       Flask Engine Backend (app.py)                    │
-│          Data Ingestion  ──►  Feature Mapping  ──► Encoding            │
-└──────────────────┬──────────────────────────────────┬──────────────────┘
-                   │                                  │
-                   ▼                                  ▼
-┌────────────────────────────────────┐ ┌─────────────────────────────────┐
-│     Local Aer Simulator Path       │ │   Physical QPU Execution Path   │
-│  • Instant response (~0.08s)       │ │  • IBM Quantum Platform Cloud   │
-│  • Ideal statevector computation   │ │  • Transpilation & Optimization │
-
-
----
+│                   2. APPLICATION LAYER (Flask Web Server)              │
+│  [ app.py Controller ]        ───►  [ config.py / Credentials ]         │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │ Normalized Feature Vector
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      3. QUANTUM MODULE (quantum/)                       │
+│  ┌──────────────────────┐   ┌─────────────────┐   ┌─────────────────┐  │
+│  │ Feature Encoder      │──►│ Circuit Builder │──►│ Backend Manager │  │
+│  │ (encoder.py)         │   │ (circuit.py)    │   │ (backend.py)    │  │
+│  └──────────────────────┘   └─────────────────┘   └────────┬────────┘  │
+└────────────────────────────────────────────────────────────┼───────────┘
+                                                             │
+                              ┌──────────────────────────────┴──────────────────────────────┐
+                              │                                                             │
+                              ▼                                                             ▼
+┌───────────────────────────────────────────┐                 ┌───────────────────────────────────────────┐
+│              LOCAL SIMULATOR              │                 │             QUANTUM HARDWARE              │
+│            (Qiskit AerSimulator)          │                 │        (IBM QPU: ibm_marrakesh)           │
+└─────────────────────┬─────────────────────┘                 └─────────────────────┬─────────────────────┘
+                      │ Ideal Bitstrings                                            │ Noisy Bitstrings
+                      └──────────────────────────────┬──────────────────────────────┘
+                                                     │
+                                                     ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      4. MODEL & SCORING LAYER (models/)                │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ Anomaly Detector (anomaly_detector.py)                           │  │
+│  │  ├─ Compute Quantum State Probability Distribution               │  │
+│  │  ├─ Calculate Anomaly Distance Score                              │  │
+│  │  └─ Generate Decision Verdict (Normal vs. Anomaly)               │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────┘
 
 ## 🔬 Quantum Hardware Execution & Analysis
 
